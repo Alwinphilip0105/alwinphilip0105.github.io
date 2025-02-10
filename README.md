@@ -9,9 +9,6 @@ The website is optimized for search engines and features clean, semantic HTML ma
 # Watch it here live!
 You can view the live website [here!](https://alwinphilip0105.github.io/)
 
-## Demo
-
-![vCard Desktop Demo](./website-demo-image/desktop.png "Desktop Demo")
 
 ## Installing my portfolio
 

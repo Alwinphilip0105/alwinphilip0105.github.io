@@ -403,9 +403,23 @@ main {
 }
 
 .avatar-box {
-  background: var(--bg-gradient-onyx);
-  border-radius: 20px;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  width: 100%; /* Ensures it takes full width of the container */
+  margin: 0 auto; /* Centers it inside its parent */
 }
+
+.avatar-box img {
+  width: 110px; /* Adjust size */
+  height: 110px; /* Keeps aspect ratio */
+  overflow: hidden;/*Prevents any image stretching or warping*/
+  border-radius: 50%; /* Makes it round */
+  object-fit: cover; /* Ensures proper scaling */
+  border: 2.5px solid #ffffff; /* Optional: Adds a border */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Optional: Adds shadow */
+}
+
 
 .info-content .name {
   color: var(--white-2);

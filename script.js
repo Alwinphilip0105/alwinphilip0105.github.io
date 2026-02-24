@@ -105,6 +105,72 @@ for (let i = 0; i < filterBtn.length; i++) {
 
 }
 
+const projectItems = document.querySelectorAll(".project-item[data-filter-item]");
+const projectModalContainer = document.querySelector("[data-project-modal-container]");
+const projectModalOverlay = document.querySelector("[data-project-overlay]");
+const projectModalCloseBtn = document.querySelector("[data-project-modal-close-btn]");
+const projectModalTitle = document.querySelector("[data-project-modal-title]");
+const projectModalCategory = document.querySelector("[data-project-modal-category]");
+const projectModalProblem = document.querySelector("[data-project-modal-problem]");
+const projectModalApproach = document.querySelector("[data-project-modal-approach]");
+const projectModalImpact = document.querySelector("[data-project-modal-impact]");
+const projectModalLink = document.querySelector("[data-project-modal-link]");
+
+const openProjectModal = function (projectItem, projectLink) {
+  if (!projectModalContainer) {
+    return;
+  }
+
+  const titleElement = projectItem.querySelector(".project-title");
+  const categoryElement = projectItem.querySelector(".project-category");
+  const title = titleElement ? titleElement.textContent.trim() : "Project";
+  const category = categoryElement ? categoryElement.textContent.trim() : "Category";
+
+  projectModalTitle.textContent = title;
+  projectModalCategory.textContent = category;
+  projectModalProblem.textContent = projectItem.dataset.caseProblem || "Built to solve a real-world product and user-flow challenge.";
+  projectModalApproach.textContent = projectItem.dataset.caseApproach || "Implemented a practical architecture with iterative development and integration testing.";
+  projectModalImpact.textContent = projectItem.dataset.caseImpact || "Delivered measurable improvements in user experience and system reliability.";
+
+  const href = projectLink ? projectLink.getAttribute("href") : "#";
+  projectModalLink.setAttribute("href", href || "#");
+
+  projectModalContainer.classList.add("active");
+};
+
+const closeProjectModal = function () {
+  if (!projectModalContainer) {
+    return;
+  }
+  projectModalContainer.classList.remove("active");
+};
+
+projectItems.forEach((projectItem) => {
+  const projectLink = projectItem.querySelector("a");
+  if (!projectLink) {
+    return;
+  }
+
+  projectLink.addEventListener("click", function (event) {
+    event.preventDefault();
+    openProjectModal(projectItem, projectLink);
+  });
+});
+
+if (projectModalOverlay) {
+  projectModalOverlay.addEventListener("click", closeProjectModal);
+}
+
+if (projectModalCloseBtn) {
+  projectModalCloseBtn.addEventListener("click", closeProjectModal);
+}
+
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") {
+    closeProjectModal();
+  }
+});
+
 // contact form variables
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");

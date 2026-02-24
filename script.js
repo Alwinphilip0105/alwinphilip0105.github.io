@@ -114,7 +114,8 @@ const projectModalCategory = document.querySelector("[data-project-modal-categor
 const projectModalProblem = document.querySelector("[data-project-modal-problem]");
 const projectModalApproach = document.querySelector("[data-project-modal-approach]");
 const projectModalImpact = document.querySelector("[data-project-modal-impact]");
-const projectModalLink = document.querySelector("[data-project-modal-link]");
+const projectModalLiveLink = document.querySelector("[data-project-modal-live-link]");
+const projectModalSourceLink = document.querySelector("[data-project-modal-source-link]");
 
 const openProjectModal = function (projectItem, projectLink) {
   if (!projectModalContainer) {
@@ -132,8 +133,22 @@ const openProjectModal = function (projectItem, projectLink) {
   projectModalApproach.textContent = projectItem.dataset.caseApproach || "Implemented a practical architecture with iterative development and integration testing.";
   projectModalImpact.textContent = projectItem.dataset.caseImpact || "Delivered measurable improvements in user experience and system reliability.";
 
-  const href = projectLink ? projectLink.getAttribute("href") : "#";
-  projectModalLink.setAttribute("href", href || "#");
+  const sourceHref = projectItem.dataset.sourceLink || (projectLink ? projectLink.getAttribute("href") : "#");
+  const liveHref = projectItem.dataset.liveLink || "";
+
+  projectModalSourceLink.setAttribute("href", sourceHref || "#");
+
+  if (liveHref) {
+    projectModalLiveLink.textContent = "Live Demo";
+    projectModalLiveLink.setAttribute("href", liveHref);
+    projectModalLiveLink.removeAttribute("aria-disabled");
+    projectModalLiveLink.classList.remove("disabled");
+  } else {
+    projectModalLiveLink.textContent = "Demo on Request";
+    projectModalLiveLink.setAttribute("href", sourceHref || "#");
+    projectModalLiveLink.setAttribute("aria-disabled", "true");
+    projectModalLiveLink.classList.add("disabled");
+  }
 
   projectModalContainer.classList.add("active");
 };

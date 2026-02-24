@@ -1292,6 +1292,25 @@ main {
   border-color: var(--orange-yellow-crayola1);
 }
 
+.project-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.project-modal-actions .project-modal-link {
+  margin-top: 0;
+}
+
+.project-modal-link.secondary {
+  background: transparent;
+}
+
+.project-modal-link.disabled {
+  opacity: 0.65;
+}
+
 
 
 

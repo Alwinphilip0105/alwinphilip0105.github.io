@@ -145,7 +145,7 @@ const openProjectModal = function (projectItem, projectLink) {
     projectModalLiveLink.classList.remove("disabled");
   } else {
     projectModalLiveLink.textContent = "Demo on Request";
-    projectModalLiveLink.setAttribute("href", sourceHref || "#");
+    projectModalLiveLink.setAttribute("href", "#");
     projectModalLiveLink.setAttribute("aria-disabled", "true");
     projectModalLiveLink.classList.add("disabled");
   }
@@ -185,6 +185,14 @@ document.addEventListener("keydown", function (event) {
     closeProjectModal();
   }
 });
+
+if (projectModalLiveLink) {
+  projectModalLiveLink.addEventListener("click", function (event) {
+    if (projectModalLiveLink.getAttribute("aria-disabled") === "true") {
+      event.preventDefault();
+    }
+  });
+}
 
 // contact form variables
 const form = document.querySelector("[data-form]");

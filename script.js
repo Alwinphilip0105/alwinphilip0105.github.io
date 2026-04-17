@@ -143,14 +143,14 @@ const openProjectModal = function (projectItem, projectLink) {
     projectModalBanner.setAttribute("hidden", "");
   }
 
-  projectModalProblem.textContent = projectItem.dataset.caseProblem || "Built to solve a real-world product and user-flow challenge.";
-  projectModalApproach.textContent = projectItem.dataset.caseApproach || "Implemented a practical architecture with iterative development and integration testing.";
-  projectModalImpact.textContent = projectItem.dataset.caseImpact || "Delivered measurable improvements in user experience and system reliability.";
+  projectModalProblem.textContent = projectItem.getAttribute("data-case-problem") || projectItem.dataset.caseProblem || "Built to solve a real-world product and user-flow challenge.";
+  projectModalApproach.textContent = projectItem.getAttribute("data-case-approach") || projectItem.dataset.caseApproach || "Implemented a practical architecture with iterative development and integration testing.";
+  projectModalImpact.textContent = projectItem.getAttribute("data-case-impact") || projectItem.dataset.caseImpact || "Delivered measurable improvements in user experience and system reliability.";
 
-  const sourceHref = projectItem.dataset.sourceLink || (projectLink ? projectLink.getAttribute("href") : "#");
-  const liveHref = projectItem.dataset.liveLink || "";
-  const demoHref = projectItem.dataset.demoLink || "";
-  const hubHref = projectItem.dataset.hubLink || "";
+  const sourceHref = projectItem.getAttribute("data-source-link") || projectItem.dataset.sourceLink || (projectLink ? projectLink.getAttribute("href") : "#");
+  const liveHref = projectItem.getAttribute("data-live-link") || projectItem.dataset.liveLink || "";
+  const demoHref = (projectLink && projectLink.getAttribute("data-demo-link")) || projectItem.getAttribute("data-demo-link") || projectItem.dataset.demoLink || "";
+  const hubHref = (projectLink && projectLink.getAttribute("data-hub-link")) || projectItem.getAttribute("data-hub-link") || projectItem.dataset.hubLink || "";
 
   projectModalSourceLink.setAttribute("href", sourceHref || "#");
 
@@ -173,15 +173,21 @@ const openProjectModal = function (projectItem, projectLink) {
   }
 
   if (liveHref) {
-    projectModalLiveLink.textContent = "Live Demo";
+    projectModalLiveLink.textContent = (demoHref || hubHref) ? "Landing / walkthrough" : "Live Demo";
     projectModalLiveLink.setAttribute("href", liveHref);
     projectModalLiveLink.removeAttribute("aria-disabled");
     projectModalLiveLink.classList.remove("disabled");
+    if (demoHref || hubHref) {
+      projectModalLiveLink.classList.add("secondary");
+    } else {
+      projectModalLiveLink.classList.remove("secondary");
+    }
   } else {
     projectModalLiveLink.textContent = "Demo on Request";
     projectModalLiveLink.setAttribute("href", "#");
     projectModalLiveLink.setAttribute("aria-disabled", "true");
     projectModalLiveLink.classList.add("disabled");
+    projectModalLiveLink.classList.remove("secondary");
   }
 
   projectModalContainer.classList.add("active");

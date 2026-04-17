@@ -118,6 +118,8 @@ const projectModalLiveLink = document.querySelector("[data-project-modal-live-li
 const projectModalDemoLink = document.querySelector("[data-project-modal-demo-link]");
 const projectModalHubLink = document.querySelector("[data-project-modal-hub-link]");
 const projectModalSourceLink = document.querySelector("[data-project-modal-source-link]");
+const projectModalBanner = document.querySelector("[data-project-modal-banner]");
+const projectModalImg = document.querySelector("[data-project-modal-img]");
 
 const openProjectModal = function (projectItem, projectLink) {
   if (!projectModalContainer) {
@@ -131,6 +133,16 @@ const openProjectModal = function (projectItem, projectLink) {
 
   projectModalTitle.textContent = title;
   projectModalCategory.textContent = category;
+
+  const cardImg = projectItem.querySelector(".project-img img");
+  if (projectModalBanner && projectModalImg && cardImg && cardImg.src) {
+    projectModalImg.src = cardImg.currentSrc || cardImg.src;
+    projectModalImg.alt = cardImg.alt || title;
+    projectModalBanner.removeAttribute("hidden");
+  } else if (projectModalBanner) {
+    projectModalBanner.setAttribute("hidden", "");
+  }
+
   projectModalProblem.textContent = projectItem.dataset.caseProblem || "Built to solve a real-world product and user-flow challenge.";
   projectModalApproach.textContent = projectItem.dataset.caseApproach || "Implemented a practical architecture with iterative development and integration testing.";
   projectModalImpact.textContent = projectItem.dataset.caseImpact || "Delivered measurable improvements in user experience and system reliability.";

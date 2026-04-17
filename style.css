@@ -1265,6 +1265,23 @@ main {
   margin: 4px 0 14px;
 }
 
+.project-modal-banner {
+  margin: 0 0 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--jet);
+  background: var(--onyx);
+}
+
+.project-modal-banner img {
+  width: 100%;
+  height: auto;
+  max-height: min(42vh, 320px);
+  display: block;
+  object-fit: cover;
+  object-position: top center;
+}
+
 .project-modal-content {
   display: grid;
   gap: 10px;

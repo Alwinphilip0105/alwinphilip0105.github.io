@@ -889,6 +889,22 @@
   </a>
 </li>
 
+            <li class="project-item active" data-filter-item data-category="machine learning" data-case-problem="Pasting into browser LLM chats (ChatGPT, Claude, Gemini, Copilot) can leak PII, secrets, and sensitive text without a clear guardrail." data-case-approach="Built a Windows desktop app (Python, PyQt6) that intercepts clipboard paste in LLM-focused browser windows and scores content with regex, spaCy NER, and a fine-tuned TinyBERT classifier (0–100 risk). Policy routes to allow, warn, or block with a remediation drawer (redact, rephrase, encrypt, override). Optional Supabase sync feeds fleet and ML health dashboards; user feedback can merge into JSONL and retraining." data-case-impact="Gives users a second line of defense before paste; optional hash-first org telemetry for model health and fleet posture. MIT license." data-source-link="https://github.com/Alwinphilip0105/Core_Sentinal" data-live-link="https://alwinphilip0105.github.io/Core_Sentinal/" data-demo-link="https://alwinphilip0105.github.io/Core_Sentinal/demo/" data-hub-link="https://alwinphilip0105.github.io/Core_Sentinal/hub.html">
+              <a href="https://alwinphilip0105.github.io/Core_Sentinal/" target="_blank" rel="noopener noreferrer">
+
+                <figure class="project-img">
+                  <div class="project-item-icon-box">
+                    <ion-icon name="eye-outline"></ion-icon>
+                  </div>
+                  <img src="images/core-sentinel.png" alt="Core Sentinel — clipboard guardrail for LLM chats" loading="lazy">
+                </figure>
+
+                <h3 class="project-title">Core Sentinel</h3>
+
+                <p class="project-category">Machine Learning</p>
+              </a>
+            </li>
+
           </ul>
 
           <div class="project-modal-container" data-project-modal-container>
@@ -910,6 +926,8 @@
 
               <div class="project-modal-actions">
                 <a class="project-modal-link" data-project-modal-live-link target="_blank" rel="noopener noreferrer">Live Demo</a>
+                <a class="project-modal-link secondary" data-project-modal-demo-link href="#" target="_blank" rel="noopener noreferrer" hidden>Interactive demo</a>
+                <a class="project-modal-link secondary" data-project-modal-hub-link href="#" target="_blank" rel="noopener noreferrer" hidden>Dashboard hub</a>
                 <a class="project-modal-link secondary" data-project-modal-source-link target="_blank" rel="noopener noreferrer">Source Code</a>
               </div>
             </section>

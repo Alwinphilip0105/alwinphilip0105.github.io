@@ -115,6 +115,8 @@ const projectModalProblem = document.querySelector("[data-project-modal-problem]
 const projectModalApproach = document.querySelector("[data-project-modal-approach]");
 const projectModalImpact = document.querySelector("[data-project-modal-impact]");
 const projectModalLiveLink = document.querySelector("[data-project-modal-live-link]");
+const projectModalDemoLink = document.querySelector("[data-project-modal-demo-link]");
+const projectModalHubLink = document.querySelector("[data-project-modal-hub-link]");
 const projectModalSourceLink = document.querySelector("[data-project-modal-source-link]");
 
 const openProjectModal = function (projectItem, projectLink) {
@@ -135,8 +137,28 @@ const openProjectModal = function (projectItem, projectLink) {
 
   const sourceHref = projectItem.dataset.sourceLink || (projectLink ? projectLink.getAttribute("href") : "#");
   const liveHref = projectItem.dataset.liveLink || "";
+  const demoHref = projectItem.dataset.demoLink || "";
+  const hubHref = projectItem.dataset.hubLink || "";
 
   projectModalSourceLink.setAttribute("href", sourceHref || "#");
+
+  if (projectModalDemoLink) {
+    if (demoHref) {
+      projectModalDemoLink.setAttribute("href", demoHref);
+      projectModalDemoLink.removeAttribute("hidden");
+    } else {
+      projectModalDemoLink.setAttribute("hidden", "");
+    }
+  }
+
+  if (projectModalHubLink) {
+    if (hubHref) {
+      projectModalHubLink.setAttribute("href", hubHref);
+      projectModalHubLink.removeAttribute("hidden");
+    } else {
+      projectModalHubLink.setAttribute("hidden", "");
+    }
+  }
 
   if (liveHref) {
     projectModalLiveLink.textContent = "Live Demo";

@@ -152,10 +152,12 @@ const openProjectModal = function (projectItem, projectLink) {
   const demoHref = (projectLink && projectLink.getAttribute("data-demo-link")) || projectItem.getAttribute("data-demo-link") || projectItem.dataset.demoLink || "";
   const hubHref = (projectLink && projectLink.getAttribute("data-hub-link")) || projectItem.getAttribute("data-hub-link") || projectItem.dataset.hubLink || "";
 
+  const isCoreSentinel = title === "Core Sentinel";
+
   projectModalSourceLink.setAttribute("href", sourceHref || "#");
 
   if (projectModalDemoLink) {
-    if (demoHref) {
+    if (demoHref && isCoreSentinel) {
       projectModalDemoLink.setAttribute("href", demoHref);
       projectModalDemoLink.removeAttribute("hidden");
     } else {
@@ -164,7 +166,7 @@ const openProjectModal = function (projectItem, projectLink) {
   }
 
   if (projectModalHubLink) {
-    if (hubHref) {
+    if (hubHref && isCoreSentinel) {
       projectModalHubLink.setAttribute("href", hubHref);
       projectModalHubLink.removeAttribute("hidden");
     } else {
@@ -172,12 +174,14 @@ const openProjectModal = function (projectItem, projectLink) {
     }
   }
 
+  const hasCoreSentinelExtras = isCoreSentinel && (demoHref || hubHref);
+
   if (liveHref) {
-    projectModalLiveLink.textContent = (demoHref || hubHref) ? "Landing / walkthrough" : "Live Demo";
+    projectModalLiveLink.textContent = hasCoreSentinelExtras ? "Landing / walkthrough" : "Live Demo";
     projectModalLiveLink.setAttribute("href", liveHref);
     projectModalLiveLink.removeAttribute("aria-disabled");
     projectModalLiveLink.classList.remove("disabled");
-    if (demoHref || hubHref) {
+    if (hasCoreSentinelExtras) {
       projectModalLiveLink.classList.add("secondary");
     } else {
       projectModalLiveLink.classList.remove("secondary");

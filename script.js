@@ -258,12 +258,25 @@ const blogModalImpact = document.querySelector("[data-blog-modal-impact]");
 const blogModalClosingNote = document.querySelector("[data-blog-modal-closing-note]");
 const blogModalMorePosts = document.querySelector("[data-blog-modal-more-posts]");
 const blogModalViews = document.querySelector("[data-blog-modal-views]");
+const blogModalCommentDrawer = document.querySelector("[data-comment-drawer]");
+const blogModalCommentList = document.querySelector("[data-comment-list]");
+const blogModalCommentForm = document.querySelector("[data-comment-form]");
+const blogModalCommentName = document.querySelector("[data-comment-name]");
+const blogModalCommentMessage = document.querySelector("[data-comment-message]");
+const blogModalCommentSubmit = document.querySelector("[data-comment-submit]");
+const blogModalCommentStatus = document.querySelector("[data-comment-status]");
+const blogModalCommentCharCount = document.querySelector("[data-comment-char-count]");
+const blogModalCommentDrawerClose = document.querySelector("[data-comment-drawer-close]");
+const blogModalCommentDrawerCount = document.querySelector("[data-comment-drawer-count]");
 
 // Global state for claps and follows
 let currentPostSlug = null;
+let activeCommentUnsubscribe = null;
 const postClaps = {};
 const hasClapped = {};
 const postViews = {};
+// Comment drawer state
+let isCommentDrawerOpen = false;
 
 const COUNTAPI_BASE = 'https://countapi.mileshilliard.com/api/v1';
 
@@ -402,69 +415,6 @@ const toggleLike = function (slug) {
     updateClapsUI(slug);
     decrementGlobalClaps(slug);
   }
-};
-
-const getInitialSeedViews = function (slug) {
-  const seed = slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  return (seed % 450) + 120;
-};
-
-const getViewsCount = function (slug) {
-  if (postViews[slug] === undefined) {
-    postViews[slug] = getInitialSeedViews(slug);
-  }
-  return postViews[slug];
-};
-
-const updateViewsUI = function (slug) {
-  const count = getViewsCount(slug);
-  
-  if (currentPostSlug === slug && blogModalViews) {
-    blogModalViews.textContent = `${count} views`;
-  }
-  
-  const cardViewsCount = document.querySelector(`[data-views-slug="${slug}"]`);
-  if (cardViewsCount) {
-    cardViewsCount.textContent = count;
-  }
-};
-
-const fetchGlobalViews = async function (slug) {
-  if (!slug) return;
-  const apiKey = 'ap_blog_views_' + slug.replace(/[^a-zA-Z0-9_-]/g, '_');
-  try {
-    const res = await fetch(`${COUNTAPI_BASE}/get/${apiKey}`);
-    if (res.status === 404) {
-      const initVal = getInitialSeedViews(slug);
-      const setRes = await fetch(`${COUNTAPI_BASE}/set/${apiKey}?value=${initVal}`);
-      if (setRes.ok) {
-        const setData = await setRes.json();
-        postViews[slug] = setData.value;
-      }
-    } else if (res.ok) {
-      const data = await res.json();
-      postViews[slug] = data.value;
-    }
-  } catch (err) {
-    console.warn("Could not fetch global views count:", err);
-  }
-  updateViewsUI(slug);
-};
-
-const incrementGlobalViews = async function (slug) {
-  if (!slug) return;
-  const apiKey = 'ap_blog_views_' + slug.replace(/[^a-zA-Z0-9_-]/g, '_');
-  try {
-    const res = await fetch(`${COUNTAPI_BASE}/hit/${apiKey}`);
-    if (res.ok) {
-      const data = await res.json();
-      postViews[slug] = data.value;
-    }
-  } catch (err) {
-    console.warn("Could not increment global views:", err);
-    postViews[slug] = getViewsCount(slug) + 1;
-  }
-  updateViewsUI(slug);
 };
 
 
@@ -761,12 +711,285 @@ const openBlogModal = function (post) {
   }
 
   blogModalContainer.classList.add("active");
+
+  // -- Attach real-time comment listener --
+  closeCommentDrawer();
+  updateCommentCount(0);
+  attachCommentListener(post.slug);
 };
 
 const closeBlogModal = function () {
   if (!blogModalContainer) return;
   blogModalContainer.classList.remove("active");
   currentPostSlug = null;
+
+  // Detach comment listener
+  if (activeCommentUnsubscribe) {
+    activeCommentUnsubscribe();
+    activeCommentUnsubscribe = null;
+  }
+  // Close comment drawer
+  closeCommentDrawer();
+};
+
+// ── VIEWS (Firebase) ──────────────────────────────────────────────────────────
+
+const getInitialSeedViews = function (slug) {
+  const seed = slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return (seed % 450) + 120;
+};
+
+const getViewsCount = function (slug) {
+  if (postViews[slug] === undefined) {
+    postViews[slug] = getInitialSeedViews(slug);
+  }
+  return postViews[slug];
+};
+
+const updateViewsUI = function (slug) {
+  const count = getViewsCount(slug);
+  if (currentPostSlug === slug && blogModalViews) {
+    blogModalViews.textContent = `${count.toLocaleString()} views`;
+  }
+  const cardViewsCount = document.querySelector(`[data-views-slug="${slug}"]`);
+  if (cardViewsCount) {
+    cardViewsCount.textContent = count.toLocaleString();
+  }
+};
+
+const fetchGlobalViews = function (slug) {
+  if (!slug) return;
+  if (typeof fetchViews === 'function') {
+    fetchViews(slug, function(count) {
+      if (count !== null) {
+        postViews[slug] = count;
+        updateViewsUI(slug);
+      } else {
+        // Firebase not configured — fallback to seed
+        updateViewsUI(slug);
+      }
+    });
+  } else {
+    updateViewsUI(slug);
+  }
+};
+
+const incrementGlobalViews = function (slug) {
+  if (!slug) return;
+  if (typeof incrementViews === 'function') {
+    incrementViews(slug, function(newCount) {
+      if (newCount !== null) {
+        postViews[slug] = newCount;
+        updateViewsUI(slug);
+      } else {
+        // Firebase not configured — still increment local count for session
+        postViews[slug] = getViewsCount(slug) + 1;
+        updateViewsUI(slug);
+      }
+    });
+  } else {
+    postViews[slug] = getViewsCount(slug) + 1;
+    updateViewsUI(slug);
+  }
+};
+
+// ── COMMENT DRAWER ───────────────────────────────────────────────────────────
+
+const formatCommentDate = function (date) {
+  if (!date) return '';
+  const now = new Date();
+  const diff = now - date;
+  const mins = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const getInitials = function (name) {
+  return (name || '?').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+};
+
+const AVATAR_COLORS = [
+  '#e05c5c', '#e08a5c', '#d4b84a', '#5cb85c', '#5cb8b2',
+  '#5c8de0', '#8a5ce0', '#c05ce0', '#e05c9d', '#5ce0a0'
+];
+
+const getAvatarColor = function (name) {
+  const sum = (name || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  return AVATAR_COLORS[sum % AVATAR_COLORS.length];
+};
+
+const renderComments = function (comments) {
+  if (!blogModalCommentList) return;
+
+  if (!comments || comments.length === 0) {
+    blogModalCommentList.innerHTML = `
+      <div class="comment-empty-state">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+        <p>No comments yet. Be the first!</p>
+      </div>
+    `;
+    updateCommentCount(0);
+    return;
+  }
+
+  updateCommentCount(comments.length);
+
+  blogModalCommentList.innerHTML = comments.map(c => {
+    const initials = getInitials(c.name);
+    const color = getAvatarColor(c.name);
+    const timeAgo = formatCommentDate(c.timestamp);
+    const escapedName = (c.name || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escapedMsg = (c.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+    return `
+      <div class="comment-card">
+        <div class="comment-avatar" style="background:${color}">${initials}</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">${escapedName}</span>
+            <span class="comment-time">${timeAgo}</span>
+          </div>
+          <p class="comment-text">${escapedMsg}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Scroll to bottom to show latest
+  blogModalCommentList.scrollTop = blogModalCommentList.scrollHeight;
+};
+
+const updateCommentCount = function (count) {
+  // Update all comment count elements
+  document.querySelectorAll('[data-comment-count]').forEach(el => {
+    el.textContent = count > 0 ? count : '0';
+  });
+  if (blogModalCommentDrawerCount) {
+    blogModalCommentDrawerCount.textContent = count > 0 ? `(${count})` : '';
+  }
+};
+
+const openCommentDrawer = function () {
+  if (!blogModalCommentDrawer) return;
+  isCommentDrawerOpen = true;
+  blogModalCommentDrawer.classList.add('open');
+  // Scroll the modal to show the drawer
+  const modal = blogModalContainer && blogModalContainer.querySelector('.blog-case-modal');
+  if (modal) {
+    setTimeout(() => {
+      blogModalCommentDrawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
+  }
+};
+
+const closeCommentDrawer = function () {
+  if (!blogModalCommentDrawer) return;
+  isCommentDrawerOpen = false;
+  blogModalCommentDrawer.classList.remove('open');
+};
+
+const toggleCommentDrawer = function () {
+  if (isCommentDrawerOpen) {
+    closeCommentDrawer();
+  } else {
+    openCommentDrawer();
+  }
+};
+
+// Comment button click → toggle drawer
+document.addEventListener('click', function (event) {
+  const commentBtn = event.target.closest('[data-comment-button]');
+  if (commentBtn) {
+    event.stopPropagation();
+    toggleCommentDrawer();
+    return;
+  }
+  const drawerClose = event.target.closest('[data-comment-drawer-close]');
+  if (drawerClose) {
+    closeCommentDrawer();
+    return;
+  }
+});
+
+// Comment form submit
+if (blogModalCommentForm) {
+  blogModalCommentForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    if (!currentPostSlug) return;
+
+    const name = blogModalCommentName ? blogModalCommentName.value.trim() : '';
+    const message = blogModalCommentMessage ? blogModalCommentMessage.value.trim() : '';
+
+    if (!name) {
+      showCommentStatus('Please enter your name.', 'error');
+      if (blogModalCommentName) blogModalCommentName.focus();
+      return;
+    }
+    if (!message) {
+      showCommentStatus('Please enter a message.', 'error');
+      if (blogModalCommentMessage) blogModalCommentMessage.focus();
+      return;
+    }
+
+    if (blogModalCommentSubmit) {
+      blogModalCommentSubmit.disabled = true;
+      blogModalCommentSubmit.innerHTML = '<ion-icon name="hourglass-outline"></ion-icon> Posting...';
+    }
+    showCommentStatus('', '');
+
+    if (typeof submitComment === 'function') {
+      const success = await submitComment(currentPostSlug, name, message);
+      if (success) {
+        if (blogModalCommentMessage) blogModalCommentMessage.value = '';
+        if (blogModalCommentCharCount) blogModalCommentCharCount.textContent = '0 / 2000';
+        showCommentStatus('Comment posted!', 'success');
+        setTimeout(() => showCommentStatus('', ''), 3000);
+      } else {
+        showCommentStatus('Failed to post comment. Please check your connection and try again.', 'error');
+      }
+    } else {
+      showCommentStatus('Comments are not available right now (Firebase not configured).', 'error');
+    }
+
+    if (blogModalCommentSubmit) {
+      blogModalCommentSubmit.disabled = false;
+      blogModalCommentSubmit.innerHTML = '<ion-icon name="send-outline"></ion-icon> Post comment';
+    }
+  });
+
+  // Character counter
+  if (blogModalCommentMessage && blogModalCommentCharCount) {
+    blogModalCommentMessage.addEventListener('input', function () {
+      const len = this.value.length;
+      blogModalCommentCharCount.textContent = `${len} / 2000`;
+      blogModalCommentCharCount.style.color = len > 1800 ? 'var(--orange-yellow-crayola)' : '';
+    });
+  }
+}
+
+const showCommentStatus = function (msg, type) {
+  if (!blogModalCommentStatus) return;
+  blogModalCommentStatus.textContent = msg;
+  blogModalCommentStatus.className = 'comment-status';
+  if (type) blogModalCommentStatus.classList.add(`comment-status--${type}`);
+};
+
+// Attach comment listener for a post slug
+const attachCommentListener = function (slug) {
+  // Detach previous
+  if (activeCommentUnsubscribe) {
+    activeCommentUnsubscribe();
+    activeCommentUnsubscribe = null;
+  }
+  if (typeof listenComments === 'function') {
+    activeCommentUnsubscribe = listenComments(slug, renderComments);
+  } else {
+    renderComments([]);
+  }
 };
 // Global Event Listeners for Blog Interactions
 document.addEventListener("click", function (event) {

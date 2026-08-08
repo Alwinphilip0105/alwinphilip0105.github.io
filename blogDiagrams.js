@@ -664,5 +664,205 @@ const blogDiagrams = {
         </g>
       </svg>
     `;
+  },
+
+  // 21. Agent Debug Loop
+  agentDebugLoop(props) {
+    return `
+      <svg viewBox="0 0 400 200" class="blog-diagram-svg" width="100%" height="100%">
+        <rect width="100%" height="100%" rx="12" fill="var(--eerie-black-1)" />
+
+        <defs>
+          <marker id="loopArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--orange-yellow-crayola)" />
+          </marker>
+        </defs>
+
+        <!-- Step nodes -->
+        <!-- Describe: top-left -->
+        <g transform="translate(90, 60)">
+          <rect x="-45" y="-20" width="90" height="40" rx="8" fill="var(--onyx)" stroke="var(--purple)" stroke-width="2" />
+          <text x="0" y="-3" fill="var(--white-1)" font-size="10" font-family="Poppins" font-weight="600" text-anchor="middle">Describe</text>
+          <text x="0" y="12" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" text-anchor="middle">the failure</text>
+        </g>
+
+        <!-- Observe: top-right -->
+        <g transform="translate(310, 60)">
+          <rect x="-45" y="-20" width="90" height="40" rx="8" fill="var(--onyx)" stroke="var(--orange-yellow-crayola)" stroke-width="2" />
+          <text x="0" y="-3" fill="var(--white-1)" font-size="10" font-family="Poppins" font-weight="600" text-anchor="middle">Observe</text>
+          <text x="0" y="12" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" text-anchor="middle">what happened</text>
+        </g>
+
+        <!-- Adjust: bottom-right -->
+        <g transform="translate(310, 148)">
+          <rect x="-45" y="-20" width="90" height="40" rx="8" fill="var(--onyx)" stroke="var(--orange-yellow-crayola)" stroke-width="2" />
+          <text x="0" y="-3" fill="var(--white-1)" font-size="10" font-family="Poppins" font-weight="600" text-anchor="middle">Adjust</text>
+          <text x="0" y="12" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" text-anchor="middle">the approach</text>
+        </g>
+
+        <!-- Repeat: bottom-left -->
+        <g transform="translate(90, 148)">
+          <rect x="-45" y="-20" width="90" height="40" rx="8" fill="var(--onyx)" stroke="var(--purple)" stroke-width="2" />
+          <text x="0" y="-3" fill="var(--white-1)" font-size="10" font-family="Poppins" font-weight="600" text-anchor="middle">Repeat</text>
+          <text x="0" y="12" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" text-anchor="middle">faster each time</text>
+        </g>
+
+        <!-- Arrows: Describe → Observe (top) -->
+        <path d="M138,60 L262,60" fill="none" stroke="var(--orange-yellow-crayola)" stroke-width="2" marker-end="url(#loopArrow)" />
+        <!-- Observe → Adjust (right) -->
+        <path d="M310,82 L310,125" fill="none" stroke="var(--orange-yellow-crayola)" stroke-width="2" marker-end="url(#loopArrow)" />
+        <!-- Adjust → Repeat (bottom) -->
+        <path d="M262,148 L138,148" fill="none" stroke="var(--orange-yellow-crayola)" stroke-width="2" marker-end="url(#loopArrow)" />
+        <!-- Repeat → Describe (left) -->
+        <path d="M90,125 L90,82" fill="none" stroke="var(--orange-yellow-crayola)" stroke-width="2" marker-end="url(#loopArrow)" />
+
+        <!-- Center label -->
+        <text x="200" y="99" fill="var(--orange-yellow-crayola)" font-size="11" font-family="Poppins" font-weight="700" text-anchor="middle">Claude Code</text>
+        <text x="200" y="114" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" text-anchor="middle">debug loop</text>
+      </svg>
+    `;
+  },
+
+  // 23. Agent Edge Cases Funnel
+  agentEdgeCases(props) {
+    return `
+      <svg viewBox="0 0 400 180" class="blog-diagram-svg" width="100%" height="100%">
+        <rect width="100%" height="100%" rx="12" fill="var(--eerie-black-1)" />
+
+        <defs>
+          <marker id="funnelArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--light-gray-70)" />
+          </marker>
+        </defs>
+
+        <!-- Funnel shape -->
+        <path d="M40,30 L360,30 L280,90 L120,90 Z" fill="var(--eerie-black-2)" stroke="var(--jet)" stroke-width="1.5" />
+        <path d="M120,90 L280,90 L240,140 L160,140 Z" fill="var(--onyx)" stroke="var(--jet)" stroke-width="1.5" />
+        <path d="M160,140 L240,140 L220,165 L180,165 Z" fill="var(--eerie-black-2)" stroke="var(--orange-yellow-crayola)" stroke-width="1.5" />
+
+        <!-- Labels inside funnel -->
+        <text x="200" y="62" fill="var(--white-2)" font-size="10" font-family="Poppins" font-weight="600" text-anchor="middle">Happy Path Inputs</text>
+        <text x="200" y="75" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" text-anchor="middle">Most inputs the agent has seen before</text>
+
+        <text x="200" y="118" fill="var(--white-2)" font-size="9" font-family="Poppins" font-weight="600" text-anchor="middle">Edge Cases</text>
+        <text x="200" y="130" fill="var(--light-gray-70)" font-size="7.5" font-family="Poppins" text-anchor="middle">Rotated fax, handwritten overlay…</text>
+
+        <text x="200" y="156" fill="var(--orange-yellow-crayola)" font-size="8.5" font-family="Poppins" font-weight="700" text-anchor="middle">Long Tail</text>
+
+        <!-- Right annotation -->
+        <text x="310" y="168" fill="var(--bittersweet-shimmer)" font-size="8" font-family="Poppins">← Most engineering time</text>
+        <line x1="253" y1="155" x2="305" y2="162" stroke="var(--bittersweet-shimmer)" stroke-width="1" stroke-dasharray="3 3" />
+      </svg>
+    `;
+  },
+
+  // 24. Agent Guardrails Spectrum
+  agentGuardrails(props) {
+    return `
+      <svg viewBox="0 0 400 160" class="blog-diagram-svg" width="100%" height="100%">
+        <rect width="100%" height="100%" rx="12" fill="var(--eerie-black-1)" />
+
+        <defs>
+          <linearGradient id="spectrumGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--bittersweet-shimmer)" />
+            <stop offset="50%" stop-color="var(--orange-yellow-crayola)" />
+            <stop offset="100%" stop-color="#2e7d32" />
+          </linearGradient>
+        </defs>
+
+        <!-- Spectrum bar -->
+        <rect x="40" y="68" width="320" height="14" rx="7" fill="url(#spectrumGrad)" opacity="0.85" />
+
+        <!-- Slider thumb / current position marker -->
+        <circle cx="190" cy="75" r="11" fill="var(--onyx)" stroke="var(--orange-yellow-crayola)" stroke-width="2.5" />
+        <circle cx="190" cy="75" r="4" fill="var(--orange-yellow-crayola)" />
+
+        <!-- Left label: Full Human Control -->
+        <text x="40" y="55" fill="var(--bittersweet-shimmer)" font-size="8.5" font-family="Poppins" font-weight="600" text-anchor="middle">Full Human</text>
+        <text x="40" y="65" fill="var(--bittersweet-shimmer)" font-size="7.5" font-family="Poppins" text-anchor="middle">Control</text>
+        <text x="40" y="104" fill="var(--light-gray-70)" font-size="7" font-family="Poppins" text-anchor="middle">Slow, safe</text>
+
+        <!-- Right label: Full Autonomy -->
+        <text x="360" y="55" fill="#2e7d32" font-size="8.5" font-family="Poppins" font-weight="600" text-anchor="middle">Full Agent</text>
+        <text x="360" y="65" fill="#2e7d32" font-size="7.5" font-family="Poppins" text-anchor="middle">Autonomy</text>
+        <text x="360" y="104" fill="var(--light-gray-70)" font-size="7" font-family="Poppins" text-anchor="middle">Fast, risky</text>
+
+        <!-- Center label -->
+        <text x="190" y="104" fill="var(--orange-yellow-crayola)" font-size="8.5" font-family="Poppins" font-weight="700" text-anchor="middle">Designed sweet spot</text>
+        <line x1="190" y1="88" x2="190" y2="100" stroke="var(--orange-yellow-crayola)" stroke-width="1.5" stroke-dasharray="2 2" />
+
+        <!-- Bottom note -->
+        <text x="200" y="135" fill="var(--white-2)" font-size="8" font-family="Poppins" font-weight="600" text-anchor="middle">Flag uncertain → Human review   |   Confident → Auto-process</text>
+        <text x="200" y="150" fill="var(--light-gray-70)" font-size="7.5" font-family="Poppins" text-anchor="middle">The balance is ongoing design work, not a one-time decision.</text>
+      </svg>
+    `;
+  },
+
+  // 22. Agent Observability Trace
+  agentObservability(props) {
+    return `
+      <svg viewBox="0 0 400 180" class="blog-diagram-svg" width="100%" height="100%">
+        <rect width="100%" height="100%" rx="12" fill="var(--eerie-black-1)" />
+
+        <defs>
+          <marker id="traceArrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--purple)" />
+          </marker>
+        </defs>
+
+        <!-- Agent Decision Chain (top row) -->
+        <text x="20" y="30" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" font-weight="600">AGENT DECISIONS</text>
+
+        <!-- Node 1: Input -->
+        <g transform="translate(60, 65)">
+          <rect x="-30" y="-18" width="60" height="36" rx="5" fill="var(--eerie-black-2)" stroke="var(--jet)" stroke-width="1.5" />
+          <text x="0" y="-3" fill="var(--white-2)" font-size="8" font-family="Poppins" font-weight="600" text-anchor="middle">Input</text>
+          <text x="0" y="10" fill="var(--light-gray-70)" font-size="7" font-family="Poppins" text-anchor="middle">received</text>
+        </g>
+        <path d="M92,65 L118,65" fill="none" stroke="var(--purple)" stroke-width="1.5" marker-end="url(#traceArrow)" />
+
+        <!-- Node 2: Parse -->
+        <g transform="translate(150, 65)">
+          <rect x="-30" y="-18" width="60" height="36" rx="5" fill="var(--eerie-black-2)" stroke="var(--jet)" stroke-width="1.5" />
+          <text x="0" y="-3" fill="var(--white-2)" font-size="8" font-family="Poppins" font-weight="600" text-anchor="middle">Parse</text>
+          <text x="0" y="10" fill="var(--light-gray-70)" font-size="7" font-family="Poppins" text-anchor="middle">+classify</text>
+        </g>
+        <path d="M182,65 L208,65" fill="none" stroke="var(--purple)" stroke-width="1.5" marker-end="url(#traceArrow)" />
+
+        <!-- Node 3: Route (fork) -->
+        <g transform="translate(240, 65)">
+          <rect x="-30" y="-18" width="60" height="36" rx="5" fill="var(--onyx)" stroke="var(--orange-yellow-crayola)" stroke-width="2" />
+          <text x="0" y="-3" fill="var(--white-1)" font-size="8" font-family="Poppins" font-weight="700" text-anchor="middle">Route</text>
+          <text x="0" y="10" fill="var(--orange-yellow-crayola)" font-size="7" font-family="Poppins" text-anchor="middle">decision pt</text>
+        </g>
+        <!-- Route → Auto -->
+        <path d="M272,58 L310,42" fill="none" stroke="var(--purple)" stroke-width="1.5" marker-end="url(#traceArrow)" />
+        <!-- Route → Flag -->
+        <path d="M272,72 L310,90" fill="none" stroke="var(--bittersweet-shimmer)" stroke-width="1.5" marker-end="url(#traceArrow)" />
+
+        <!-- Node 4a: Auto-process -->
+        <g transform="translate(345, 38)">
+          <rect x="-32" y="-15" width="64" height="30" rx="4" fill="var(--eerie-black-2)" stroke="var(--purple)" stroke-width="1.5" />
+          <text x="0" y="-1" fill="var(--white-2)" font-size="7.5" font-family="Poppins" font-weight="600" text-anchor="middle">Auto-process</text>
+          <text x="0" y="10" fill="var(--light-gray-70)" font-size="7" font-family="Poppins" text-anchor="middle">✓ confident</text>
+        </g>
+
+        <!-- Node 4b: Flag review -->
+        <g transform="translate(345, 95)">
+          <rect x="-32" y="-15" width="64" height="30" rx="4" fill="var(--eerie-black-2)" stroke="var(--bittersweet-shimmer)" stroke-width="1.5" />
+          <text x="0" y="-1" fill="var(--white-2)" font-size="7.5" font-family="Poppins" font-weight="600" text-anchor="middle">Flag review</text>
+          <text x="0" y="10" fill="var(--bittersweet-shimmer)" font-size="7" font-family="Poppins" text-anchor="middle">⚠ uncertain</text>
+        </g>
+
+        <!-- Observability logging layer -->
+        <text x="20" y="130" fill="var(--light-gray-70)" font-size="8" font-family="Poppins" font-weight="600">OBSERVABILITY LOG</text>
+        <rect x="20" y="138" width="355" height="28" rx="5" fill="var(--onyx)" stroke="var(--orange-yellow-crayola)" stroke-width="1.5" opacity="0.8" />
+        <text x="35" y="155" fill="var(--orange-yellow-crayola)" font-size="7.5" font-family="Courier New">[trace] input→parse: doc_type=referral | route=auto | reason=conf&gt;0.92</text>
+
+        <!-- Downward trace lines -->
+        <line x1="60" y1="83" x2="60" y2="138" stroke="var(--jet)" stroke-width="1" stroke-dasharray="2 3" opacity="0.5" />
+        <line x1="240" y1="83" x2="240" y2="138" stroke="var(--jet)" stroke-width="1" stroke-dasharray="2 3" opacity="0.5" />
+      </svg>
+    `;
   }
 };

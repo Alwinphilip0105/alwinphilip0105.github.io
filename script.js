@@ -257,11 +257,13 @@ const blogModalApproach = document.querySelector("[data-blog-modal-approach]");
 const blogModalImpact = document.querySelector("[data-blog-modal-impact]");
 const blogModalClosingNote = document.querySelector("[data-blog-modal-closing-note]");
 const blogModalMorePosts = document.querySelector("[data-blog-modal-more-posts]");
+const blogModalViews = document.querySelector("[data-blog-modal-views]");
 
 // Global state for claps and follows
 let currentPostSlug = null;
 const postClaps = {};
 const hasClapped = {};
+const postViews = {};
 
 const COUNTAPI_BASE = 'https://countapi.mileshilliard.com/api/v1';
 
@@ -401,6 +403,70 @@ const toggleLike = function (slug) {
     decrementGlobalClaps(slug);
   }
 };
+
+const getInitialSeedViews = function (slug) {
+  const seed = slug.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return (seed % 450) + 120;
+};
+
+const getViewsCount = function (slug) {
+  if (postViews[slug] === undefined) {
+    postViews[slug] = getInitialSeedViews(slug);
+  }
+  return postViews[slug];
+};
+
+const updateViewsUI = function (slug) {
+  const count = getViewsCount(slug);
+  
+  if (currentPostSlug === slug && blogModalViews) {
+    blogModalViews.textContent = `${count} views`;
+  }
+  
+  const cardViewsCount = document.querySelector(`[data-views-slug="${slug}"]`);
+  if (cardViewsCount) {
+    cardViewsCount.textContent = count;
+  }
+};
+
+const fetchGlobalViews = async function (slug) {
+  if (!slug) return;
+  const apiKey = 'ap_blog_views_' + slug.replace(/[^a-zA-Z0-9_-]/g, '_');
+  try {
+    const res = await fetch(`${COUNTAPI_BASE}/get/${apiKey}`);
+    if (res.status === 404) {
+      const initVal = getInitialSeedViews(slug);
+      const setRes = await fetch(`${COUNTAPI_BASE}/set/${apiKey}?value=${initVal}`);
+      if (setRes.ok) {
+        const setData = await setRes.json();
+        postViews[slug] = setData.value;
+      }
+    } else if (res.ok) {
+      const data = await res.json();
+      postViews[slug] = data.value;
+    }
+  } catch (err) {
+    console.warn("Could not fetch global views count:", err);
+  }
+  updateViewsUI(slug);
+};
+
+const incrementGlobalViews = async function (slug) {
+  if (!slug) return;
+  const apiKey = 'ap_blog_views_' + slug.replace(/[^a-zA-Z0-9_-]/g, '_');
+  try {
+    const res = await fetch(`${COUNTAPI_BASE}/hit/${apiKey}`);
+    if (res.ok) {
+      const data = await res.json();
+      postViews[slug] = data.value;
+    }
+  } catch (err) {
+    console.warn("Could not increment global views:", err);
+    postViews[slug] = getViewsCount(slug) + 1;
+  }
+  updateViewsUI(slug);
+};
+
 
 const formatDate = function (dateStr) {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -575,6 +641,10 @@ const openBlogModal = function (post) {
   blogModalDate.setAttribute("datetime", post.date);
   blogModalTags.textContent = post.tags.join(", ");
   if (blogModalReadingTime) blogModalReadingTime.textContent = post.readingTime || '5 min read';
+
+  // -- Update Views UI state & increment live global views --
+  updateViewsUI(post.slug);
+  incrementGlobalViews(post.slug);
 
   // -- Hero image / graphic --
   if (blogModalHeroGraphic) {
@@ -797,7 +867,11 @@ if (blogPostsList && typeof blogPosts !== 'undefined') {
               <time datetime="${post.date}">${formatDate(post.date)}</time>
               <span class="dot"></span>
               <span class="blog-reading-time">${post.readingTime || '5 min read'}</span>
-
+              <span class="dot"></span>
+              <span class="blog-card-views" style="display: inline-flex; align-items: center; gap: 4px;">
+                <ion-icon name="eye-outline" style="font-size: 14px;"></ion-icon>
+                <span data-views-slug="${post.slug}">${getViewsCount(post.slug)}</span>
+              </span>
             </div>
             
             <h3 class="h3 blog-item-title">${post.title}</h3>
@@ -835,7 +909,8 @@ if (blogPostsList && typeof blogPosts !== 'undefined') {
     }
   });
 
-
+  // Fetch views count for all posts on initial page load
+  blogPosts.forEach(post => fetchGlobalViews(post.slug));
 }
 
 // Bind close handlers for blog modal

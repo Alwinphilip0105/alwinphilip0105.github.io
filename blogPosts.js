@@ -1,5 +1,90 @@
 const blogPosts = [
   {
+    slug: "agents-in-production",
+    coverImage: "images/agents-in-production-banner.png",
+    readingTime: "6 min read",
+    format: "narrative",
+    title: "What Building Agents in Production Actually Looks Like",
+    date: "2026-08-08",
+    tags: ["claude-code", "agentic-ai", "ehr-automation", "production-ml", "healthcare"],
+    summary: "Six months into building agentic AI systems for healthcare automation with Claude Code, here's what nobody's demo video tells you about the gap between 'the agent works' and 'the agent works in production.'",
+    sections: [
+      {
+        heading: null,
+        text: "Most agentic AI content online is a demo: watch an agent complete a multi-step task in a clean sandbox, cut to applause. What that format almost never shows is what happens when the same agent has to run continuously, on real data, inside a system that other people already depend on — where \"it worked that one time I recorded it\" isn't the bar.\n\nAt Beacon Health AI, I work on agentic systems that automate real operational work inside EHR workflows — things like document intake and processing that used to require a person reading a fax line by line and typing it into the right fields. The demo version of this is easy to imagine. The production version is where almost all the actual engineering happens, and it's the part I want to write about.",
+        graphic: null
+      },
+      {
+        heading: "Building with Claude Code Changes What \"Writing the Agent\" Even Means",
+        text: "A meaningful amount of my day-to-day is spent working inside Claude Code — not just asking it to write a function, but using it as an active collaborator for debugging agent behavior, reasoning through edge cases, and iterating on how the agent itself should be structured.\n\nThe workflow looks less like \"write code, then test it\" and more like a continuous back-and-forth: describe the failure, look at what actually happened, adjust the approach, try again. That loop is faster than traditional debugging, but it also means you have to get much more disciplined about *how* you describe problems, because a vague prompt gets you a vague fix.",
+        graphic: {
+          type: "agentDebugLoop",
+          props: {},
+          caption: "The Claude Code collaboration loop — describe, observe, adjust, repeat. Faster than traditional debugging, but only as good as how precisely you frame the problem."
+        }
+      },
+      {
+        heading: "The Hard Part Isn't the Happy Path",
+        text: "Any agent can handle the input that looks like every other input it's seen before. What actually takes the engineering time is the long tail: a fax that's rotated 90 degrees, a form field that's been handwritten over a printed template, a document that's technically valid but structured in a way nobody anticipated.\n\nProduction agent work is mostly the accumulation of handling one more edge case than you handled yesterday. That's not glamorous — but it's the job. And honestly, it's the part that keeps it interesting.",
+        graphic: {
+          type: "agentEdgeCases",
+          props: {},
+          caption: "The distribution of real-world inputs: the happy path is a small slice. Most engineering time lives in the long tail of unusual, ambiguous, or malformed inputs."
+        }
+      },
+      {
+        heading: "Observability Has to Exist Before You Need It, Not After",
+        text: "Early on, when something went wrong, my honest answer to \"why did the agent do that?\" was sometimes just \"I don't know.\" That's not an acceptable answer in a system touching real operational data.\n\nA real chunk of the engineering effort has gone into making agent decisions traceable after the fact — logging not just what the agent did, but what it saw and why it chose that path — so a failure becomes a five-minute investigation instead of a guessing game. Building observability in retrospect is always harder than designing it from the start.",
+        graphic: {
+          type: "agentObservability",
+          props: {},
+          caption: "Every agent decision — input, parse, route — logged with reasoning so any failure is traceable in minutes, not hours."
+        }
+      },
+      {
+        heading: "Multiple Systems of Record Means Multiple Sources of Truth",
+        text: "A recurring theme in this work is reconciling data across systems that don't always agree with each other. Deciding which system to trust, and building validation that catches discrepancies before they propagate downstream, has been just as important as anything about the AI itself.\n\nThis is the unglamorous 80% of agentic engineering that never makes it into a conference talk. It's also, in my experience, where most of the real reliability wins come from.",
+        graphic: {
+          type: "branching",
+          props: {
+            roles: [
+              { name: "EHR System", use: "Source A — authoritative for patient IDs" },
+              { name: "Fax / Intake", use: "Source B — raw document data" },
+              { name: "Validation Layer", use: "Reconciles discrepancies before downstream push" }
+            ]
+          },
+          caption: "When systems disagree, the agent needs a clear rule for which source wins — and validation that catches mismatches before they become bad data in production."
+        }
+      },
+      {
+        heading: "Guardrails Aren't a Checkbox — They're Ongoing Design Work",
+        text: "Working in healthcare-adjacent automation means every agent decision has to be built with the assumption that it could be wrong, and the system needs to fail safely when it is — flagging for human review rather than confidently pushing a bad output downstream.\n\nThat tension, between making the agent genuinely useful (autonomous enough to save real time) and keeping a human in the loop where it matters, is something I've had to actively design around rather than solve once and move on. The slider doesn't stay in place by itself — you have to keep adjusting it as the system matures and trust builds.",
+        graphic: {
+          type: "agentGuardrails",
+          props: {},
+          caption: "The autonomy-vs-safety spectrum isn't a one-time setting. It's an ongoing design conversation as confidence in the system grows over time."
+        }
+      },
+      {
+        heading: "What Success Actually Looks Like",
+        text: "The honest measure of success for this kind of work isn't \"the agent is impressive\" — it's \"the people who used to do this manually trust it enough to rely on it every day, and when it's wrong, someone finds out fast.\" That's a much less exciting-sounding goal than \"we built an autonomous agent,\" but it's the one that actually matters once the thing is running in production instead of a demo.\n\nThe broader lesson I keep relearning: agentic AI's hardest problems right now aren't really about the model. They're about observability, edge cases, and designing for graceful failure — the same problems that have always defined reliable software engineering, just with a probabilistic component now sitting in the middle of the system.",
+        graphic: {
+          type: "metricCallout",
+          props: {
+            metrics: [
+              { val: "Trust", label: "ops team uses it daily" },
+              { val: "Fast", label: "failures surface quickly" },
+              { val: "Safe", label: "confident-wrong = flagged" }
+            ]
+          },
+          caption: "The real production benchmark: not demo-impressive, but operationally reliable enough that real people choose it over doing it manually."
+        }
+      }
+    ],
+    closingNote: "I'm continuing to build in this space at Beacon Health AI. The engineers who'll do this well long-term are the ones who treat \"the agent is confidently wrong\" as the default failure mode to design against — not an edge case to patch later."
+  },
+
+  {
     slug: "rutgers-graduate-featured",
     coverImage: "images/rutgers-graduation-banner.png",
     readingTime: "2 min read",

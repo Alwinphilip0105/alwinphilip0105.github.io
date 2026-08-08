@@ -698,7 +698,8 @@ const closeBlogModal = function () {
   blogModalContainer.classList.remove("active");
   currentPostSlug = null;
 };
-
+// Global Event Listeners for Blog Interactions
+document.addEventListener("click", function (event) {
   // 3. Share Button functionality
   const shareBtn = event.target.closest("[data-share]");
   if (shareBtn) {

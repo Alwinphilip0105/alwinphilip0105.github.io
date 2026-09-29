@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LeanJobOS Demo</title>
+<meta name="description" content="A walkthrough of LeanJobOS, an AI job-search platform built by Alwin Philip.">
+<link rel="shortcut icon" href="../images/logo.jpg" type="image/x-icon">
+<style>
+  :root {
+    --bg: #F5F5F7; --card: #FFFFFF; --ink: #1D1D1F; --soft: #48484C; --muted: #6E6E73;
+    --line: #E3E3E8; --accent: #007AFF; --accent-soft: #EAF2FF; --amber: #B45309; --green: #1F7A3A;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1012; --card: #1A1B1F; --ink: #F2F2F4; --soft: #C9C9CF; --muted: #9A9AA2;
+      --line: #2C2D33; --accent: #4DA3FF; --accent-soft: #14243A; --amber: #F0A04B; --green: #5CC57E;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1012; --card: #1A1B1F; --ink: #F2F2F4; --soft: #C9C9CF; --muted: #9A9AA2;
+    --line: #2C2D33; --accent: #4DA3FF; --accent-soft: #14243A; --amber: #F0A04B; --green: #5CC57E;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font: 16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text",
+         "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; padding-inline: 20px; padding-block: 28px 64px; }
+  .wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  h1, h2, h3 { text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+  h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.08; }
+  h2 { font-size: clamp(24px, 3.2vw, 32px); line-height: 1.15; }
+  h3 { font-size: 19px; }
+  p { margin: 0; max-width: 68ch; color: var(--soft); }
+  a { color: var(--accent); }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .lede { font-size: 19px; color: var(--soft); max-width: 60ch; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .fact { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: 13.5px; color: var(--soft); }
+  .video { display: flex; flex-direction: column; gap: 10px; }
+  video { width: 100%; max-width: 100%; border-radius: 14px; border: 1px solid var(--line); background: #000; display: block; }
+  .caption { font-size: 13.5px; color: var(--muted); }
+  section { display: flex; flex-direction: column; gap: 18px; }
+  .diagram { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; overflow-x: auto; }
+  .tour { display: flex; flex-direction: column; gap: 40px; }
+  .stop { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .stop:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 1.55fr); }
+  .stop:nth-child(even) figure { order: 2; }
+  figure { margin: 0; }
+  figure img { display: block; width: 100%; max-width: 100%; border-radius: 12px; border: 1px solid var(--line);
+               box-shadow: 0 8px 28px rgba(15, 20, 30, .08); }
+  .text { display: flex; flex-direction: column; gap: 10px; padding-top: 6px; }
+  .route { font: 12.5px/1 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--muted); }
+  ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--soft); }
+  li::marker { color: var(--accent); }
+  .phones { display: grid; grid-template-columns: repeat(2, minmax(0, 260px)); gap: 20px; justify-content: start; }
+  .phones img { border-radius: 22px; }
+  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+  .rule { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+  .rule b { font-size: 15px; }
+  .rule span { font-size: 14px; color: var(--soft); }
+  .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; counter-reset: step; }
+  .flow div { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; color: var(--soft); }
+  .flow div b { display: block; color: var(--ink); font-size: 14.5px; margin-bottom: 2px; }
+  .flow div::before { counter-increment: step; content: counter(step); display: inline-grid; place-items: center; width: 22px; height: 22px;
+      border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .back { font-size: 14px; text-decoration: none; }
+  .note { font-size: 14px; color: var(--muted); }
+  footer { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
+  code { font: 13px ui-monospace, "SF Mono", Menlo, Consolas, monospace; background: var(--accent-soft); padding: 1px 5px; border-radius: 5px; }
+  @media (max-width: 760px) {
+    .stop, .stop:nth-child(even) { grid-template-columns: minmax(0, 1fr); }
+    .stop:nth-child(even) figure { order: 0; }
+    .phones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+</head><body>
+<div class="wrap">
+  <header>
+    <a class="back" href="../">← Alwin Philip · Portfolio</a>
+    <div class="eyebrow">LeanJobOS · walkthrough</div>
+    <h1>A job search that fills the forms for you and waits for your yes.</h1>
+    <p class="lede">LeanJobOS finds roles that fit, prepares each application, and fills it in Chrome on your
+      laptop while you watch from your phone. Nothing is sent without you.</p>
+    <div class="facts">
+      <span class="fact">Personal project · in active development</span>
+      <span class="fact">Fills in your laptop's Chrome, 3 at a time</span>
+      <span class="fact">LinkedIn + Indeed each morning, free</span>
+      <span class="fact">US only · entry to 3 years</span>
+    </div>
+    <p class="note">Screens are from my own running copy, captured 28 September 2026. Company names and counts from my real job search are blurred; "Acme Robotics" is a stand-in.</p>
+  </header>
+
+  <section aria-labelledby="how">
+    <div class="eyebrow">How it fits together</div>
+    <h2 id="how">Three parts: the server, your laptop, your phone</h2>
+    <p>The server runs all the time and holds everything. A small program on each laptop — the worker — is
+      the only part that touches application forms. It asks the server for work, opens a Chrome tab per
+      application and reports every step back, so you can follow along anywhere.</p>
+    <div class="diagram">
+<pre class="mermaid">
+flowchart LR
+  P[Your phone / browser] -->|site password| S[Server<br/>database · job search · AI]
+  S -->|jobs twice a day| B[Company job boards<br/>and careers portals]
+  S -->|each morning| L[LinkedIn · Indeed<br/>via Apify, logged out]
+  W[Worker on your laptop] -->|asks for work, reports back| S
+  W --> C[LeanJobOS Chrome<br/>a tab per application]
+  C --> F[Employer's form<br/>Workday · Greenhouse · Lever · Ashby]
+</pre>
+    </div>
+    <div class="flow" aria-label="From found to applied">
+      <div><b>Found</b>From the companies you watch, LinkedIn and Indeed, or a link you add.</div>
+      <div><b>Matched</b>Scored against your résumé; US only, your level, your kinds of work.</div>
+      <div><b>Prepared</b>Tailored résumé, answers, a cover letter only if the form asks.</div>
+      <div><b>Filled</b>In your laptop's Chrome, page by page, while you watch.</div>
+      <div><b>Applied</b>Marked the moment the confirmation shows — or when you say so.</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="tour">
+    <div class="eyebrow">The screens</div>
+    <h2 id="tour">A tour of the app</h2>
+    <div class="tour">
+
+      <div class="stop">
+        <figure><img src="today.png" alt="Today: an application needing you at the top, then the next step, this week's numbers and new matches" loading="lazy"></figure>
+        <div class="text">
+          <span class="route">Today</span>
+          <h3>What needs you, then what's next</h3>
+          <ul>
+            <li>An application that needs you is one line with <b>Open</b> — the details live on its own page.</li>
+            <li>Your next step: drafts ready for review, or new matches.</li>
+            <li>Applying now, with <b>Watch &amp; chat</b>, <b>Stop</b> and <b>Stop all</b>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop">
+        <figure><img src="live.png" alt="The live application page: the question it needs answered, the live form, and What it's doing with the chat" loading="lazy"></figure>
+        <div class="text">
+          <span class="route">/runs/&lt;id&gt; — the live application</span>
+          <h3>Watch it fill, answer it, talk to it</h3>
+          <ul>
+            <li>What it needs from you is at the top: answer the question, tap Ready, or say <b>I submitted it</b>.</li>
+            <li>The laptop's screen, every two seconds.</li>
+            <li><b>What it's doing</b> step by step, and a chat box: "put 120000 for salary". Tick
+              <b>Remember for this site</b> to keep it.</li>
+            <li>The <b>Résumé</b> tab shows the exact file being attached.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop">
+        <figure><img src="jobs.png" alt="Jobs: filters including Where, a list with New badges and scores, and the selected job with Prepare, Fill in Chrome and I applied" loading="lazy"></figure>
+        <div class="text">
+          <span class="route">Jobs</span>
+          <h3>Your matches, newest first</h3>
+          <ul>
+            <li>Jobs found in the last day are marked <b>New</b>; each has a match score and the skills you have or lack.</li>
+            <li>Filter by <b>Where</b> (a city, a state, Remote), pay, visa stance, kind of work.</li>
+            <li><b>Prepare application</b> to review and send, or <b>Fill in Chrome</b> to have it filled and submit it yourself.</li>
+            <li>Paste any job link at the top — LinkedIn and Indeed jobs are looked up on the company's own site.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop">
+        <figure><img src="applications.png" alt="Applications: counts by stage and a table of every application with status and proof" loading="lazy"></figure>
+        <div class="text">
+          <span class="route">Applications</span>
+          <h3>Everything you sent, and what came back</h3>
+          <ul>
+            <li>Every application with its status, when it went and the proof.</li>
+            <li>Employer emails move them along on their own: acknowledged, interview, offer, rejected.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop">
+        <figure><img src="insights.png" alt="Insights: a tile map of US states shaded by strong matches, with California's figures" loading="lazy"></figure>
+        <div class="text">
+          <span class="route">Insights</span>
+          <h3>Where the jobs are</h3>
+          <ul>
+            <li>Open jobs by state: strong matches, median posted pay, H-1B filings, postings that rule out a visa.</li>
+            <li>Which companies have the most openings in your fields.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="stop">
+        <figure><img src="passwords.png" alt="Passwords and site notes: saved sign-ins with Show password, and notes the agent follows per site" loading="lazy"></figure>
+        <div class="text">
+          <span class="route">Settings → Passwords &amp; site notes</span>
+          <h3>Sign-ins it uses, notes it follows</h3>
+          <ul>
+            <li>Sign-ins for Workday, Randstad, Kforce and any site, encrypted on the server.</li>
+            <li>For Workday it makes the account itself and saves the password here; you only click the email link.</li>
+            <li>Notes per site that every application there follows. (Sign-ins shown are examples.)</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section aria-labelledby="phone">
+    <div class="eyebrow">On the phone</div>
+    <h2 id="phone">The same app in your pocket</h2>
+    <p>Add it to your home screen. A notification tells you when an application needs you; tapping it opens
+      that application's live page.</p>
+    <div class="phones">
+      <figure><img src="phone-today.png" alt="Today on a phone" loading="lazy"></figure>
+      <figure><img src="phone-live.png" alt="The live application page on a phone" loading="lazy"></figure>
+    </div>
+  </section>
+
+  <section aria-labelledby="rules">
+    <div class="eyebrow">Always</div>
+    <h2 id="rules">The rules it keeps</h2>
+    <div class="rules">
+      <div class="rule"><b>Nothing sent without you</b><span>You approve, or it stops at Submit.</span></div>
+      <div class="rule"><b>Nothing invented</b><span>Answers come from your résumé, profile and saved answers.</span></div>
+      <div class="rule"><b>Cookies: the minimum</b><span>Reject all or necessary only — never accept all.</span></div>
+      <div class="rule"><b>Self-ID: yours, then review</b><span>Filled from your saved answers; you check before it sends.</span></div>
+      <div class="rule"><b>Your accounts stay yours</b><span>No bot logs into LinkedIn or Indeed.</span></div>
+      <div class="rule"><b>Free stays free</b><span>Apify's usage is checked before every search.</span></div>
+    </div>
+  </section>
+
+  <footer>
+    Built by <a href="../">Alwin Philip</a> · FastAPI, React/TypeScript, SQLite, Playwright, Claude API · deployed on Oracle Cloud.
+  </footer>
+</div>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: true, securityLevel: "strict", theme: dark ? "dark" : "neutral" });
+</script>
+</body></html>

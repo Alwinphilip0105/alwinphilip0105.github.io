@@ -1234,6 +1234,11 @@ main {
   transition: var(--transition-1);
 }
 
+.project-case-modal {
+  max-height: 88vh;
+  overflow-y: auto;
+}
+
 .project-modal-container.active .project-case-modal,
 .blog-modal-container.active .blog-case-modal {
   transform: translateY(0);

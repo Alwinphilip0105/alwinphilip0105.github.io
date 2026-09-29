@@ -1004,6 +1004,8 @@ main {
 
 .skills-item:not(:last-child) { margin-bottom: 15px; }
 
+.skills-text { color: var(--light-gray); font-size: var(--fs-6); font-weight: var(--fw-300); line-height: 1.6; margin-top: 4px; }
+
 .skill .title-wrapper {
   display: flex;
   align-items: center;
